@@ -10,7 +10,7 @@ const ModalComponent = ({ show, onClose, onSave, data, isEdit }) => {
 
   const handleSubmit = () => {
     onSave(formData);
-    setFormData({ title: "", artist: "", year: "", genre: "" }); // Reset form after save
+    setFormData({ title: "", artist: "", year: "", genre: "" }); 
     onClose();
   };
 

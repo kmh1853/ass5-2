@@ -8,31 +8,26 @@ const ShowList = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [currentData, setCurrentData] = useState(null);
 
-  // Add new data
   const handleAdd = (newData) => {
     setMusic([...music, { id: Date.now().toString(), ...newData }]);
   };
 
-  // Update existing data
   const handleUpdate = (updatedData) => {
     setMusic(music.map((item) => (item.id === updatedData.id ? updatedData : item)));
   };
 
-  // Open modal for adding
   const handleAddModal = () => {
     setIsEdit(false);
     setCurrentData(null);
     setShowModal(true);
   };
 
-  // Open modal for editing
   const handleEditModal = (data) => {
     setIsEdit(true);
     setCurrentData(data);
     setShowModal(true);
   };
 
-  // Delete data
   const handleDelete = (id) => {
     setMusic(music.filter((item) => item.id !== id));
   };
