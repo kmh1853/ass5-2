@@ -6,34 +6,26 @@ const UpdatePage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(null);
 
+  const [updateCount, setUpdateCount] = useState(0); // 수정 횟수
+
   useEffect(() => {
-    // 기존 데이터 가져오기
-    fetch(`/api/music/${id}`)
+    fetch(`http://localhost:3001/music/${id}`)
       .then((response) => response.json())
       .then((data) => setFormData(data))
-      .catch((error) => console.error("Error fetching music data:", error));
+      .catch((error) => console.error("Error fetching music:", error));
   }, [id]);
 
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  const handleChange = async (field, value) => {
+    const updatedData = { ...formData, [field]: value };
+    setFormData(updatedData);
+    setUpdateCount((prev) => prev + 1);
 
-  const handleSave = async () => {
     try {
-      const response = await fetch(`/api/music/${id}`, {
+      await fetch(`http://localhost:3001/music/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
       });
-
-      if (response.ok) {
-        alert("음악 정보가 성공적으로 수정되었습니다.");
-        navigate("/list");
-      } else {
-        console.error("Failed to update music.");
-      }
     } catch (error) {
       console.error("Error updating music:", error);
     }
@@ -44,12 +36,13 @@ const UpdatePage = () => {
   return (
     <div className="container">
       <h1>음악 수정</h1>
+      <p>수정 횟수: {updateCount}</p>
       <div className="mb-3">
         <label>제목</label>
         <input
           type="text"
           className="form-control"
-          value={formData.title || ""}
+          value={formData.title}
           onChange={(e) => handleChange("title", e.target.value)}
         />
       </div>
@@ -58,7 +51,7 @@ const UpdatePage = () => {
         <input
           type="text"
           className="form-control"
-          value={formData.artist || ""}
+          value={formData.artist}
           onChange={(e) => handleChange("artist", e.target.value)}
         />
       </div>
@@ -67,7 +60,7 @@ const UpdatePage = () => {
         <input
           type="number"
           className="form-control"
-          value={formData.year || ""}
+          value={formData.year}
           onChange={(e) => handleChange("year", e.target.value)}
         />
       </div>
@@ -76,13 +69,10 @@ const UpdatePage = () => {
         <input
           type="text"
           className="form-control"
-          value={formData.genre || ""}
+          value={formData.genre}
           onChange={(e) => handleChange("genre", e.target.value)}
         />
       </div>
-      <button className="btn btn-primary" onClick={handleSave}>
-        저장
-      </button>
     </div>
   );
 };

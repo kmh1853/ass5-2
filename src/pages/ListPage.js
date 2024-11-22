@@ -6,36 +6,16 @@ const ListPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // API 호출로 목록 가져오기
-    fetch("/api/music")
+    fetch("http://localhost:3001/music")
       .then((response) => response.json())
       .then((data) => setMusic(data))
-      .catch((error) => console.error("Error fetching music list:", error));
+      .catch((error) => console.error("Error fetching music:", error));
   }, []);
-
-  const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`/api/music/${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        setMusic(music.filter((item) => item.id !== id));
-      } else {
-        console.error("Failed to delete music.");
-      }
-    } catch (error) {
-      console.error("Error deleting music:", error);
-    }
-  };
 
   return (
     <div className="container">
       <h1>음악 목록</h1>
-      <button
-        className="btn btn-primary mb-3"
-        onClick={() => navigate("/create")}
-      >
+      <button className="btn btn-primary mb-3" onClick={() => navigate("/create")}>
         음악 추가
       </button>
       <div className="row">
@@ -44,7 +24,7 @@ const ListPage = () => {
             <div className="card">
               <div className="card-body">
                 <h5 className="card-title">{item.title}</h5>
-                <p className="card-text">
+                <p>
                   <strong>가수:</strong> {item.artist} <br />
                   <strong>연도:</strong> {item.year} <br />
                   <strong>장르:</strong> {item.genre}

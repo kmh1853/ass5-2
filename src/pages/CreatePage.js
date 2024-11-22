@@ -1,51 +1,24 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const CreatePage = ({ onSave }) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    artist: "",
-    year: "",
-    genre: "",
-  });
-
-  const titleRef = useRef();
-  const artistRef = useRef();
+const CreatePage = () => {
+  const [formData, setFormData] = useState({ title: "", artist: "", year: "", genre: "" });
+  const navigate = useNavigate();
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = async () => {
-    // 유효성 검사
-    if (!formData.title) {
-      titleRef.current.focus();
-      alert("제목은 필수입니다.");
-      return;
-    }
-    if (!formData.artist) {
-      artistRef.current.focus();
-      alert("가수는 필수입니다.");
-      return;
-    }
-
     try {
-      // API 호출
-      const response = await fetch("/api/music", {
+      await fetch("http://localhost:3001/music", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, id: Date.now().toString() }),
       });
-
-      if (response.ok) {
-        alert("음악 정보가 성공적으로 추가되었습니다.");
-        setFormData({ title: "", artist: "", year: "", genre: "" });
-      } else {
-        console.error("Failed to create music.");
-      }
+      navigate("/list");
     } catch (error) {
-      console.error("Error creating music:", error);
+      console.error("Error adding music:", error);
     }
   };
 
@@ -59,7 +32,6 @@ const CreatePage = ({ onSave }) => {
           className="form-control"
           value={formData.title}
           onChange={(e) => handleChange("title", e.target.value)}
-          ref={titleRef}
         />
       </div>
       <div className="mb-3">
@@ -69,7 +41,6 @@ const CreatePage = ({ onSave }) => {
           className="form-control"
           value={formData.artist}
           onChange={(e) => handleChange("artist", e.target.value)}
-          ref={artistRef}
         />
       </div>
       <div className="mb-3">

@@ -6,8 +6,7 @@ const DetailPage = () => {
   const [music, setMusic] = useState(null);
 
   useEffect(() => {
-    // API 호출로 데이터 로드
-    fetch(`/api/music/${id}`)
+    fetch(`http://localhost:3001/music/${id}`)
       .then((response) => response.json())
       .then((data) => setMusic(data))
       .catch((error) => console.error("Error fetching music:", error));
