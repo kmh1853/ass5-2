@@ -8,12 +8,47 @@ const ShowList = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [currentData, setCurrentData] = useState(null);
 
-  const handleAdd = (newData) => {
-    setMusic([...music, { id: Date.now().toString(), ...newData }]);
+  const handleAdd = async (newData) => {
+    const newMusic = { id: Date.now().toString(), ...newData };
+
+    try {
+      const response = await fetch("/api/music", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newMusic),
+      });
+
+      if (response.ok) {
+        setMusic([...music, newMusic]);
+      } else {
+        console.error("Failed to add music");
+      }
+    } catch (error) {
+      console.error("Error adding music:", error);
+    }
   };
 
-  const handleUpdate = (updatedData) => {
-    setMusic(music.map((item) => (item.id === updatedData.id ? updatedData : item)));
+  const handleUpdate = async (updatedData) => {
+    // 서버에 데이터 수정 요청 (PUT)
+    try {
+      const response = await fetch(`/api/music/${updatedData.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (response.ok) {
+        setMusic(music.map((item) => (item.id === updatedData.id ? updatedData : item)));
+      } else {
+        console.error("Failed to update music");
+      }
+    } catch (error) {
+      console.error("Error updating music:", error);
+    }
   };
 
   const handleAddModal = () => {
@@ -28,8 +63,21 @@ const ShowList = () => {
     setShowModal(true);
   };
 
-  const handleDelete = (id) => {
-    setMusic(music.filter((item) => item.id !== id));
+  const handleDelete = async (id) => {
+    // 서버에 데이터 삭제 요청 (DELETE)
+    try {
+      const response = await fetch(`/api/music/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setMusic(music.filter((item) => item.id !== id));
+      } else {
+        console.error("Failed to delete music");
+      }
+    } catch (error) {
+      console.error("Error deleting music:", error);
+    }
   };
 
   return (
