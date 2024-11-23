@@ -1,69 +1,89 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import myData from "../my_data.json";
 
 const CreatePage = () => {
   const [formData, setFormData] = useState({ title: "", artist: "", year: "", genre: "" });
   const navigate = useNavigate();
 
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const titleRef = useRef();
+  const artistRef = useRef();
+  const yearRef = useRef();
+  const genreRef = useRef();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleSave = async () => {
-    try {
-      await fetch("http://localhost:3001/music", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, id: Date.now().toString() }),
-      });
-      navigate("/list");
-    } catch (error) {
-      console.error("Error adding music:", error);
+  const handleSubmit = () => {
+    if (!formData.title) {
+      alert("Title 을 입력하세요!");
+      titleRef.current.focus();
+      return;
     }
+    if (!formData.artist) {
+      alert("Artist 을 입력하세요!");
+      artistRef.current.focus();
+      return;
+    }
+    if (!formData.year) {
+      alert("Year 을 입력하세요!");
+      yearRef.current.focus();
+      return;
+    }
+    if (!formData.genre) {
+      alert("Genre 를 입력하세요!");
+      genreRef.current.focus();
+      return;
+    }
+
+    const newMusic = { id: Date.now().toString(), ...formData };
+    myData.music.push(newMusic);
+    alert("Music added successfully!");
+    navigate("/list");
   };
 
   return (
-    <div className="container">
-      <h1>음악 추가</h1>
-      <div className="mb-3">
-        <label>제목</label>
+    <div className="container mt-4">
+      <h1>Create New Music</h1>
+      <form>
         <input
-          type="text"
-          className="form-control"
+          ref={titleRef}
+          name="title"
           value={formData.title}
-          onChange={(e) => handleChange("title", e.target.value)}
+          onChange={handleChange}
+          className="form-control mb-2"
+          placeholder="Title"
         />
-      </div>
-      <div className="mb-3">
-        <label>가수</label>
         <input
-          type="text"
-          className="form-control"
+          ref={artistRef}
+          name="artist"
           value={formData.artist}
-          onChange={(e) => handleChange("artist", e.target.value)}
+          onChange={handleChange}
+          className="form-control mb-2"
+          placeholder="Artist"
         />
-      </div>
-      <div className="mb-3">
-        <label>연도</label>
         <input
-          type="number"
-          className="form-control"
+          ref={yearRef}
+          name="year"
           value={formData.year}
-          onChange={(e) => handleChange("year", e.target.value)}
+          onChange={handleChange}
+          className="form-control mb-2"
+          placeholder="Year"
         />
-      </div>
-      <div className="mb-3">
-        <label>장르</label>
         <input
-          type="text"
-          className="form-control"
+          ref={genreRef}
+          name="genre"
           value={formData.genre}
-          onChange={(e) => handleChange("genre", e.target.value)}
+          onChange={handleChange}
+          className="form-control mb-2"
+          placeholder="Genre"
         />
-      </div>
-      <button className="btn btn-primary" onClick={handleSave}>
-        저장
-      </button>
+        <button type="button" className="btn btn-primary mt-3" onClick={handleSubmit}>
+          추가
+        </button>
+      </form>
     </div>
   );
 };

@@ -1,26 +1,31 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import myData from "../my_data.json"; 
 
 const DetailPage = () => {
-  const { id } = useParams();
+  const { id } = useParams(); 
+  const navigate = useNavigate();
   const [music, setMusic] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/music/${id}`)
-      .then((response) => response.json())
-      .then((data) => setMusic(data))
-      .catch((error) => console.error("Error fetching music:", error));
+    const musicDetail = myData.music.find((item) => item.id === id);
+    setMusic(musicDetail);
   }, [id]);
 
-  if (!music) return <div>Loading...</div>;
+  if (!music) {
+    return <p>Loading...</p>;
+  }
 
   return (
-    <div className="container">
-      <h1>음악 상세 정보</h1>
-      <p><strong>제목:</strong> {music.title}</p>
-      <p><strong>가수:</strong> {music.artist}</p>
-      <p><strong>연도:</strong> {music.year}</p>
-      <p><strong>장르:</strong> {music.genre}</p>
+    <div className="container mt-4">
+      <h1>Music Details</h1>
+      <p><strong>Title:</strong> {music.title}</p>
+      <p><strong>Artist:</strong> {music.artist}</p>
+      <p><strong>Year:</strong> {music.year}</p>
+      <p><strong>Genre:</strong> {music.genre}</p>
+      <button className="btn btn-secondary mt-3" onClick={() => navigate("/list")}>
+        List로 이동
+      </button>
     </div>
   );
 };

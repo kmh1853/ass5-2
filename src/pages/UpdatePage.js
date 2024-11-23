@@ -1,78 +1,71 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import myData from "../my_data.json";
 
 const UpdatePage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState(null);
-
-  const [updateCount, setUpdateCount] = useState(0); // 수정 횟수
+  const [formData, setFormData] = useState({ title: "", artist: "", year: "", genre: "" });
+  const [editCount, setEditCount] = useState(0);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/music/${id}`)
-      .then((response) => response.json())
-      .then((data) => setFormData(data))
-      .catch((error) => console.error("Error fetching music:", error));
+    const musicToUpdate = myData.music.find((item) => item.id === id);
+    if (musicToUpdate) {
+      setFormData(musicToUpdate);
+    }
   }, [id]);
 
-  const handleChange = async (field, value) => {
-    const updatedData = { ...formData, [field]: value };
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    const updatedData = { ...formData, [name]: value };
     setFormData(updatedData);
-    setUpdateCount((prev) => prev + 1);
+    setEditCount((prevCount) => prevCount + 1);
+
+    const index = myData.music.findIndex((item) => item.id === id);
+    if (index !== -1) {
+      myData.music[index] = updatedData;
+    }
 
     try {
-      await fetch(`http://localhost:3001/music/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedData),
-      });
+      console.log(`Simulated PUT request: Updating ${name} to ${value}`);
     } catch (error) {
-      console.error("Error updating music:", error);
+      console.error("Error updating data:", error);
     }
   };
 
-  if (!formData) return <div>Loading...</div>;
-
   return (
-    <div className="container">
-      <h1>음악 수정</h1>
-      <p>수정 횟수: {updateCount}</p>
-      <div className="mb-3">
-        <label>제목</label>
+    <div className="container mt-4">
+      <h1>Update Music</h1>
+      <form>
         <input
-          type="text"
-          className="form-control"
+          name="title"
           value={formData.title}
-          onChange={(e) => handleChange("title", e.target.value)}
+          onChange={handleChange}
+          className="form-control mb-2"
+          placeholder="Title"
         />
-      </div>
-      <div className="mb-3">
-        <label>가수</label>
         <input
-          type="text"
-          className="form-control"
+          name="artist"
           value={formData.artist}
-          onChange={(e) => handleChange("artist", e.target.value)}
+          onChange={handleChange}
+          className="form-control mb-2"
+          placeholder="Artist"
         />
-      </div>
-      <div className="mb-3">
-        <label>연도</label>
         <input
-          type="number"
-          className="form-control"
+          name="year"
           value={formData.year}
-          onChange={(e) => handleChange("year", e.target.value)}
+          onChange={handleChange}
+          className="form-control mb-2"
+          placeholder="Year"
         />
-      </div>
-      <div className="mb-3">
-        <label>장르</label>
         <input
-          type="text"
-          className="form-control"
+          name="genre"
           value={formData.genre}
-          onChange={(e) => handleChange("genre", e.target.value)}
+          onChange={handleChange}
+          className="form-control mb-2"
+          placeholder="Genre"
         />
-      </div>
+        <p>총 수정 횟수: {editCount}</p>
+      </form>
     </div>
   );
 };

@@ -1,19 +1,24 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
+import ListPage from './pages/ListPage';
+import DetailPage from './pages/DetailPage';
+import UpdatePage from './pages/UpdatePage';
+import CreatePage from './pages/CreatePage';
 
-import React from "react";
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<ListPage />} />
+        <Route path="/list" element={<ListPage />} />
+        <Route path="/detail/:id" element={<DetailPage />} />
+        <Route path="/update/:id" element={<UpdatePage />} />
+        <Route path="/create" element={<CreatePage />} />
+      </Routes>
+    </Router>
+  );
+};
 
-import ReactDOM from "react-dom/client";
-
-import "./index.css";
-
-import ShowList from "./components/ShowList";
-import "bootstrap/dist/css/bootstrap.min.css";
-
-
-
-const myComponent = <ShowList />;
-
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-
-
-root.render(myComponent);
+ReactDOM.render(<App />, document.getElementById('root'));
